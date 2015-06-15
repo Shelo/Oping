@@ -24,4 +24,4 @@ A simple yet powerful example is:
 
 The code above will create an image, with the id MyFirstImage, inside that, declare 4 things, a position, with values 0, 0, the rotation as 0, and then two other things, each one will have attributes inside, and so on.
 
-The language needs indentation, and every declaration is in a different line. Lines beggining with a + are branches, and lines with - are nodes (you can say that is not necessary because of indentation, but those signs make the language instant readable).
+The language needs indentation, and every declaration is in a different line. Lines beggining with a + are branches, and lines with - are leafs (you can say that is not necessary because of indentation, but those signs make the language instant readable).
