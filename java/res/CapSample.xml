@@ -1,0 +1,25 @@
+<Scene>
+    <Entity
+        name="Player"
+        position="0, 0"
+        rotation="0">
+
+        <Sprite
+            texture="res/images/sprite.jpg"/>
+
+    </Entity>
+
+    <Entity
+        position="0, 0"
+        rotation="0">
+
+        <Sprite
+            texture="res/images/cursor.jpg"/>
+
+    </Entity>
+
+    <Include
+        source="enemy.xml"
+        position="0, 0"
+        rotation="0" />
+</Scene>

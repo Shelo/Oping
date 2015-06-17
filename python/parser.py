@@ -7,14 +7,14 @@ class Oping(object):
         self.root = None
 
         self.indentation_type = 0
-        self.indentation_spaces = -1
+        self.indentation_width = -1
 
         self.line_number = 0
 
         self.previous_indentation_level = 0
         self.previous_node_type = None
 
-    def tree_parse(self, file_path):
+    def forest_parse(self, file_path):
         # create the tree root.
         self.root = list()
 
@@ -29,7 +29,11 @@ class Oping(object):
 
                 # only consider non empty lines.
                 stripped_line = fixed_line.strip()
+
                 if stripped_line:
+                    if stripped_line[0] == CHAR_COMMENT:
+                        continue
+
                     self.process_line(fixed_line, stripped_line)
 
         return self.root
@@ -42,12 +46,12 @@ class Oping(object):
         if first_char in INDENTATION_CHARS:
             # we'll do something different if this is an indented line.
 
-            if self.indentation_spaces == -1:
+            if self.indentation_width == -1:
                 # at this point, this being the first indented line, we will calculate the spaces of
                 # an indentation level, and from now on, this will be the rule.
 
                 # save the indentation spaces.
-                self.indentation_spaces = self.get_indentation_spaces(line)
+                self.indentation_width = self.get_indentation_width(line)
                 self.indentation_type = first_char
 
                 # this should be the first level.
@@ -58,8 +62,6 @@ class Oping(object):
 
         self.process_node(indentation_level, stripped_line)
 
-        return self.root
-
     def process_node(self, indentation_level, node_line):
         node_type = self.get_node_type(node_line)
 
@@ -69,13 +71,10 @@ class Oping(object):
         branch = self.get_last_branch_at_level(indentation_level)
 
         if node_type == TYPE_BRANCH:
-            node_name, node_id = self.get_branch_attributes(node_line)
+            node_name = self.get_branch_name(node_line)
 
             # if this is a branch, add a new branch to the largest branch.
-            if node_id is None:
-                branch.append((node_name, []))
-            else:
-                branch.append((node_name, node_id, []))
+            branch.append((node_name, []))
 
         else:
             node_name, node_values = self.get_leaf_attributes(node_line)
@@ -87,21 +86,15 @@ class Oping(object):
         self.previous_indentation_level = indentation_level
 
     def get_indentation_level(self, line):
-        spaces = 0
+        width = self.get_indentation_width(line)
 
-        for char in line:
-            if char in INDENTATION_CHARS:
-                spaces += 1
-            else:
-                break
-
-        if spaces % self.indentation_spaces != 0:
+        if width % self.indentation_width != 0:
             raise IndentationError("[l %d] There's an error in the indentation of the parsed file." % self.line_number)
 
-        return spaces / self.indentation_spaces
+        return width / self.indentation_width
 
     @staticmethod
-    def get_indentation_spaces(line):
+    def get_indentation_width(line):
         spaces = 0
 
         for char in line:
@@ -112,12 +105,17 @@ class Oping(object):
 
         return spaces
 
+    # TODO
     def prove_node_validity(self, indentation_level, node_type, node_line):
         if node_type == TYPE_LEAF:
             if self.previous_node_type is None:
-                raise SyntaxError("[l %d] A leaf cannot be the root of the tree." % self.line_number)
+                raise SyntaxError("[l %d] A leaf is not a tree." % self.line_number)
 
-        # TODO: make way more validations.
+            elif self.previous_node_type == TYPE_LEAF and self.previous_indentation_level < indentation_level:
+                raise SyntaxError("[l %d] This node is not indented well." % self.line_number)
+
+            elif self.previous_node_type == TYPE_BRANCH and self.previous_indentation_level == indentation_level:
+                raise SyntaxError("[l %d] The previous node is a branch with no leafs inside." % self.line_number)
 
     def get_node_type(self, node_line):
         first_char = node_line[0]
@@ -152,16 +150,16 @@ class Oping(object):
 
         return branch
 
-    def get_branch_attributes(self, node_line):
-        types = re.search("\+ ([^\(\)]*?) *(?:\(([^\(\)]*?)\))?$", node_line)
+    def get_branch_name(self, node_line):
+        types = re.search("\+ +([A-Za-z0-9_]+?)$", node_line)
 
         if types is None:
             raise SyntaxError("[l %d] There's a syntax error." % self.line_number)
 
-        return types.group(1), types.group(2)
+        return types.group(1)
 
     def get_leaf_attributes(self, node_line):
-        matches = re.search("\- ([a-zA-Z0-9]+?): *(.+[^,])$", node_line)
+        matches = re.search("\- +([a-zA-Z0-9]+?): *(.+[^,])$", node_line)
 
         if matches is None:
             raise SyntaxError("[l %d] There's a syntax error." % self.line_number)
@@ -170,6 +168,7 @@ class Oping(object):
 
         latest_value = ""
         in_string = False
+
         for char in matches.group(2):
             if char == '"\'':
                 in_string = not in_string
@@ -195,5 +194,5 @@ class Oping(object):
 
 if __name__ == '__main__':
     oping = Oping()
-    parsed_tree = oping.tree_parse("ToBeParsed.oping")
+    parsed_tree = oping.forest_parse("ToBeParsed.oping")
     print parsed_tree
