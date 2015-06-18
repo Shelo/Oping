@@ -10,12 +10,14 @@ As an example, here's a simple hierarchy:
   - UUID: 4742da68-1604-11e5-b60b-1697f925ec7b
   - LogFile: "output.log"
   - CreationDate: 18, 6, 2015
+
   + Subprocess
     - Id: 1
     + Target
       - File: "target1"
     + Target
       - File: "target2"
+
   + Subprocess
     - Id: 2
     + Target
