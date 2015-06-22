@@ -8,16 +8,28 @@ public class Branch extends Node
     private ArrayList<Branch> branches = new ArrayList<>();
     private HashMap<String, Leaf> leafs = new HashMap<>();
 
-    private String name;
+    private String namespace;
 
     /**
-     * Creates a branch with a name but no id.
+     * Creates a branch with a name but no namespace.
      *
      * @param name  name of this branch.
      */
     public Branch(String name)
     {
         setName(name);
+    }
+
+    /**
+     * Creates a branch with a name and namespace.
+     *
+     * @param name  name of this branch.
+     */
+    public Branch(String namespace, String name)
+    {
+        this(name);
+
+        this.namespace = namespace;
     }
 
     public void addBranch(Branch branch)
@@ -40,7 +52,7 @@ public class Branch extends Node
     {
         for (Branch child : branches)
         {
-            if (child.isBranch() && child.hasName(name))
+            if (child.isBranch() && child.nameIs(name))
             {
                 return child;
             }
@@ -61,7 +73,7 @@ public class Branch extends Node
 
         for (Branch branch : branches)
         {
-            if (branch.isBranch() && branch.hasName(name))
+            if (branch.isBranch() && branch.nameIs(name))
             {
                 branches.add(branch);
             }
@@ -113,24 +125,53 @@ public class Branch extends Node
         leafs.put(leaf.getName(), leaf);
     }
 
+    public void setNamespace(String namespace)
+    {
+        this.namespace = namespace;
+    }
+
+    public String getNamespace()
+    {
+        return namespace;
+    }
+
+    public boolean hasNamespace()
+    {
+        return namespace != null;
+    }
+
+    public boolean namespaceIs(String other)
+    {
+        return this.namespace.equals(other);
+    }
+
     @Override
     public String toString()
     {
-        return String.format("Branch %s with %d branches and %d leafs.", getName(), branches.size(), leafs.size());
+        if (hasNamespace())
+        {
+            return String.format("Branch %s:%s with %d branches and %d leafs.", getNamespace(), getName(),
+                    branches.size(), leafs.size());
+        }
+        else
+        {
+            return String.format("Branch %s with %d branches and %d leafs.", getName(), branches.size(), leafs.size());
+        }
     }
 
     public void printRecursive()
     {
-        System.out.println("-> Leafs of " + getName() + " Branch.");
+        System.out.println(toString());
+        System.out.println("-> Leafs:");
         for (String leafName : leafs.keySet())
         {
-            System.out.println(leafs.get(leafName));
+            System.out.println("   " + leafs.get(leafName));
         }
 
-        System.out.println("-> Branches of " + getName() + " Branch.");
+        System.out.println("-> Branches:");
         for (Branch branch : branches)
         {
-            System.out.println(branch);
+            System.out.println("   " + branch);
             branch.printRecursive();
         }
 

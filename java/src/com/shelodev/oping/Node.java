@@ -15,7 +15,7 @@ public abstract class Node
         this.name = name;
     }
 
-    public boolean hasName(String name)
+    public boolean nameIs(String name)
     {
         return this.name.equals(name);
     }

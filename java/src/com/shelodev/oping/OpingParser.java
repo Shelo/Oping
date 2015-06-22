@@ -40,7 +40,7 @@ public class OpingParser
     {
         // TODO: this is not totally valid.
         leafPattern = Pattern.compile("\\- +([A-Za-z0-9_]+?): *(.*)");
-        branchPattern = Pattern.compile("\\+ +([A-Za-z0-9_]+?)$");
+        branchPattern = Pattern.compile("\\+ +([A-Za-z0-9]+:)?([A-Za-z0-9]+)$");
     }
 
     public ArrayList<Branch> forestParsing(final String filePath) throws IOException
@@ -112,8 +112,7 @@ public class OpingParser
 
         if (nodeType == NodeType.BRANCH)
         {
-            String branchName = findBranchName(state, nodeLine);
-            Branch child = new Branch(branchName);
+            Branch child = retrieveBranch(state, nodeLine);
             branch.addBranch(child);
         }
         else
@@ -126,13 +125,23 @@ public class OpingParser
         state.setPreviousIndentationLevel(indentationLevel);
     }
 
-    private String findBranchName(ParseState state, String nodeLine) throws IOException
+    private Branch retrieveBranch(ParseState state, String nodeLine) throws IOException
     {
         Matcher matcher = branchPattern.matcher(nodeLine);
 
         if (matcher.find())
         {
-            return matcher.group(1);
+            if (matcher.group(1) != null)
+            {
+                // in this case, we have a branch with a namespace.
+                String namespace = matcher.group(1);
+                return new Branch(namespace.substring(0, namespace.length() - 1), matcher.group(2));
+            }
+            else
+            {
+                // branch with just a name.
+                return new Branch(matcher.group(2));
+            }
         }
 
         throw new IOException(String.format("Error at line %d: Not a valid branch.", state.getLineNumber()));
