@@ -1,4 +1,7 @@
-package com.shelodev.oping;
+package com.shelodev.oping.structure;
+
+import com.shelodev.oping.OpingParser;
+import com.shelodev.oping.State;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -176,5 +179,25 @@ public class Branch extends Node
         }
 
         System.out.println();
+    }
+
+    /**
+     * Recycles this and all children (branches and leafs) of this branch.
+     *
+     * @param state the current state of the parser.
+     */
+    public void recycle(State state)
+    {
+        for (Leaf leaf : leafs.values())
+        {
+            state.putLeaf(leaf);
+        }
+
+        for (Branch branch : branches)
+        {
+            branch.recycle(state);
+        }
+
+        state.putBranch(this);
     }
 }

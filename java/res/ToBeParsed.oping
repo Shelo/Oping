@@ -3,16 +3,10 @@
     - Position: 0, 0
     - Rotation: 0
 
-    + Moka:Sprite
-        - Texture: "res/images/sprite.jpg"
-
 + Entity
     - Name: "Cursor"
     - Position: 0, 0
     - Rotation: 0
-
-    + Sprite
-        - Texture: "res/images/cursor.jpg"
 
 + Include
     - Source: "res/images/platform.oping"

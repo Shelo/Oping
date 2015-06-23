@@ -36,7 +36,7 @@ public class Util
         return width;
     }
 
-    public static int getIndentationLevel(ParseState state, String line) throws IOException
+    public static int getIndentationLevel(State state, String line) throws IOException
     {
         int width = getIndentationWidth(line);
 
@@ -49,7 +49,7 @@ public class Util
         return width / state.getIndentationWidth();
     }
 
-    public static OpingParser.NodeType getNodeType(ParseState state, String nodeLine) throws IOException
+    public static OpingParser.NodeType getNodeType(State state, String nodeLine) throws IOException
     {
         char firstChar = nodeLine.charAt(0);
 

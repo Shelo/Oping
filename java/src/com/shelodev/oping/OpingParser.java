@@ -1,5 +1,8 @@
 package com.shelodev.oping;
 
+import com.shelodev.oping.structure.Branch;
+import com.shelodev.oping.structure.Leaf;
+
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,7 +49,7 @@ public class OpingParser
     public ArrayList<Branch> forestParsing(final String filePath) throws IOException
     {
         Branch branches = new Branch(null);
-        ParseState state = new ParseState();
+        State state = new State();
         state.setBranchesRoot(branches);
 
         BufferedReader reader = new BufferedReader(new FileReader(filePath));
@@ -76,7 +79,63 @@ public class OpingParser
         return branches.getBranches();
     }
 
-    public void processLine(String rawLine, String trimmedLine, ParseState state) throws IOException
+    /**
+     * This parser will stop at every root's child, this allows to reuse every branch and leaf, saving a lot of
+     * memory resources.
+     *
+     * The client cannot save anything for latter, since everything is mutable.
+     *
+     * @param filePath      the file to be parsed.
+     * @param branchStop    the callback that this method will call at every stop.
+     * @throws IOException  if something happens while trying to parse.
+     */
+    public void eachBranchParse(final String filePath, final BranchStop branchStop) throws IOException
+    {
+        Branch branches = new Branch(null);
+        State state = new State();
+        state.setBranchesRoot(branches);
+        state.enableRecycling();
+
+        BufferedReader reader = new BufferedReader(new FileReader(filePath));
+
+        String line;
+        while ((line = reader.readLine()) != null)
+        {
+            // get a trimmed line, with only needed chars.
+            String trimmedLine = line.trim();
+
+            int previousBranches = branches.getBranches().size();
+
+            if (!trimmedLine.isEmpty())
+            {
+                // remove only newline char.
+                String rawLine = Util.removeNewLineChar(line);
+
+                state.incrementLineNumber();
+
+                if (trimmedLine.charAt(0) == CHAR_COMMENT)
+                {
+                    continue;
+                }
+
+                processLine(rawLine, trimmedLine, state);
+
+                if (branches.getBranches().size() != previousBranches)
+                {
+                    if (previousBranches != 0)
+                    {
+                        Branch previous = branches.getBranches().get(previousBranches - 1);
+                        branchStop.onBranch(previous);
+                        previous.recycle(state);
+                    }
+                }
+            }
+        }
+
+        branchStop.onBranch(branches.getLastBranch());
+    }
+
+    public void processLine(String rawLine, String trimmedLine, State state) throws IOException
     {
         char firstChar = rawLine.charAt(0);
         int indentationLevel = 0;
@@ -103,7 +162,7 @@ public class OpingParser
         processNode(state, indentationLevel, trimmedLine);
     }
 
-    public void processNode(ParseState state, int indentationLevel, String nodeLine) throws IOException
+    public void processNode(State state, int indentationLevel, String nodeLine) throws IOException
     {
         NodeType nodeType = Util.getNodeType(state, nodeLine);
         proveNodeIsValid(state, indentationLevel, nodeType, nodeLine);
@@ -125,7 +184,19 @@ public class OpingParser
         state.setPreviousIndentationLevel(indentationLevel);
     }
 
-    private Branch retrieveBranch(ParseState state, String nodeLine) throws IOException
+    public Branch newBranch(State state, String namespace, String name)
+    {
+        if (state.isRecycling())
+        {
+            return state.takeBranch(namespace, name);
+        }
+        else
+        {
+            return new Branch(namespace, name);
+        }
+    }
+
+    private Branch retrieveBranch(State state, String nodeLine) throws IOException
     {
         Matcher matcher = branchPattern.matcher(nodeLine);
 
@@ -135,25 +206,37 @@ public class OpingParser
             {
                 // in this case, we have a branch with a namespace.
                 String namespace = matcher.group(1);
-                return new Branch(namespace.substring(0, namespace.length() - 1), matcher.group(2));
+                return newBranch(state, namespace.substring(0, namespace.length() - 1), matcher.group(2));
             }
             else
             {
                 // branch with just a name.
-                return new Branch(matcher.group(2));
+                return newBranch(state, null, matcher.group(2));
             }
         }
 
         throw new IOException(String.format("Error at line %d: Not a valid branch.", state.getLineNumber()));
     }
 
-    private Leaf retrieveLeaf(ParseState state, String nodeLine) throws IOException
+    public Leaf newLeaf(State state, String name)
+    {
+        if (state.isRecycling())
+        {
+            return state.takeLeaf(name);
+        }
+        else
+        {
+            return new Leaf(name);
+        }
+    }
+
+    private Leaf retrieveLeaf(State state, String nodeLine) throws IOException
     {
         Matcher matcher = leafPattern.matcher(nodeLine);
 
         if (matcher.find())
         {
-            Leaf leaf = new Leaf(matcher.group(1));
+            Leaf leaf = newLeaf(state, matcher.group(1));
 
             String values = matcher.group(2);
 
@@ -203,7 +286,7 @@ public class OpingParser
         throw new IOException(String.format("Error at line %d: Not a valid branch.", state.getLineNumber()));
     }
 
-    private Branch getLastBranchAtLevel(ParseState state, int indentationLevel)
+    private Branch getLastBranchAtLevel(State state, int indentationLevel)
     {
         Branch branch = state.getRoot();
         int counter = 0;
@@ -216,7 +299,7 @@ public class OpingParser
         return branch;
     }
 
-    private boolean proveNodeIsValid(ParseState state, int indentationLevel, NodeType nodeType, String nodeLine)
+    private boolean proveNodeIsValid(State state, int indentationLevel, NodeType nodeType, String nodeLine)
             throws IOException
     {
         // TODO: Do this.

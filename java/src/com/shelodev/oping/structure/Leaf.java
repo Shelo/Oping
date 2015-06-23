@@ -1,11 +1,13 @@
-package com.shelodev.oping;
+package com.shelodev.oping.structure;
+
+import com.shelodev.oping.OpingParser;
 
 import java.util.ArrayList;
 
 public class Leaf extends Node
 {
     private ArrayList<String> values = new ArrayList<>();
-
+    
     public Leaf(String name)
     {
         setName(name);

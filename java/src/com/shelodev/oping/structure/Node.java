@@ -1,4 +1,6 @@
-package com.shelodev.oping;
+package com.shelodev.oping.structure;
+
+import com.shelodev.oping.OpingParser;
 
 public abstract class Node
 {
