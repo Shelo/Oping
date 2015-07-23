@@ -250,8 +250,7 @@ public class OpingParser
                 {
                     inString = !inString;
                 }
-
-                if (inString)
+                else if (inString)
                 {
                     latestValue.append(c);
                 }
