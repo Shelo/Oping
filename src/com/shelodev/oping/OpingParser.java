@@ -261,12 +261,6 @@ public class OpingParser
                         leaf.addValue(latestValue.toString());
                         latestValue.delete(0, latestValue.length());
                     }
-                    // remember: whe are not in a string!.
-                    else if (latestValue.length() != 0 && (c == CHAR_SPACE || c == CHAR_TAB))
-                    {
-                        throw new IOException(String.format("Error at line %d: Syntax error in values.",
-                                state.getLineNumber()));
-                    }
                     else if (latestValue.length() != 0 || !(c == CHAR_SPACE || c == CHAR_TAB))
                     {
                         latestValue.append(c);
