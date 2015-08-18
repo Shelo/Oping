@@ -3,13 +3,5 @@
     - Position: 0, 0
     - Rotation: 0
 
-+ Entity
-    - Name: "Cursor"
-    - Position: 0, 0
-    - Rotation: 0
-
-+ Include
-    - Source: "res/images/platform.oping"
-    - Name: "Platform1"
-    - Position: 0, 0
-    - Rotation: 90
+    + Test
+        - Name: "Player2"
