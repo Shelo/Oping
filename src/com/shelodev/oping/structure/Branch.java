@@ -4,6 +4,7 @@ import com.shelodev.oping.OpingParser;
 import com.shelodev.oping.State;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 
 public class Branch extends Node
@@ -199,5 +200,10 @@ public class Branch extends Node
         }
 
         state.putBranch(this);
+    }
+
+    public Collection<Leaf> getLeafs()
+    {
+        return leafs.values();
     }
 }

@@ -49,4 +49,9 @@ public class Leaf extends Node
     {
         return String.format("Leaf %s with values: %s", getName(), values.toString());
     }
+
+    public int size()
+    {
+        return values.size();
+    }
 }
