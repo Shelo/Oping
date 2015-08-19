@@ -27,7 +27,9 @@ public class OpingParser
         tokenizer.tokenize(data);
         tokens = tokenizer.getTokens();
 
-        process();
+        tokens.debug(data);
+
+        // process();
     }
 
     private void process()
