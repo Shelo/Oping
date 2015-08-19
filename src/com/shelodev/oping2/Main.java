@@ -1,8 +1,12 @@
 package com.shelodev.oping2;
 
+import com.shelodev.oping2.structure.Branch;
+import com.shelodev.oping2.structure.Leaf;
+
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main
 {
@@ -35,7 +39,11 @@ public class Main
         */
 
         OpingParser parser = new OpingParser();
-        parser.parse(data);
-        parser.getElements().debug(data);
+        ArrayList<Branch> branches = parser.parse(data);
+
+        for (Branch branch : branches)
+        {
+            System.out.println(branch.toString(0));
+        }
     }
 }

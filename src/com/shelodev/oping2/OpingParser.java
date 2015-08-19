@@ -1,5 +1,9 @@
 package com.shelodev.oping2;
 
+import com.shelodev.oping2.structure.Branch;
+
+import java.util.ArrayList;
+
 public class OpingParser
 {
     private OpingTokenizer tokenizer;
@@ -8,7 +12,6 @@ public class OpingParser
     private int tokenIndex;
     private int elementIndex;
     private int indentationBlockLength;
-
     private boolean firstIndentation = true;
     private boolean catchIndentation = false;
 
@@ -17,7 +20,7 @@ public class OpingParser
         tokenizer = new OpingTokenizer();
     }
 
-    public void parse(char[] data)
+    public ArrayList<Branch> parse(char[] data)
     {
         this.tokenIndex = 0;
         this.elementIndex = 0;
@@ -27,9 +30,11 @@ public class OpingParser
         tokenizer.tokenize(data);
         tokens = tokenizer.getTokens();
 
-        tokens.debug(data);
+        process();
 
-        // process();
+        elements.debug(data);
+
+        return TreeBuilder.build(elements, data);
     }
 
     private void process()

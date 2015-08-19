@@ -1,4 +1,4 @@
-package com.shelodev;
+package com.shelodev.oping;
 
 import com.shelodev.oping.BranchStop;
 import com.shelodev.oping.structure.Branch;

@@ -4,4 +4,6 @@
     - Rotation: 0
 
     + Test
-        - Name: "Player2"
+        - InnerName: Player2, "Player3, 2"
+
+    - Wea: 2
