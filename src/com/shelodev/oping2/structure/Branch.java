@@ -45,8 +45,8 @@ public class Branch
         {
             if (data.length == 1)
             {
-                String[] copy = data;
-                data = new String[] { namespace, copy[0] };
+                String name = data[0];
+                data = new String[] { namespace, name };
             }
             else
             {
@@ -85,9 +85,15 @@ public class Branch
         branches.add(branch);
     }
 
-    public void addLeaf(Leaf leaf)
+    /**
+     * Adds a new leaf to the branch.
+     * @param leaf  the leaf to add.
+     * @return      this branch for chaining.
+     */
+    public Branch addLeaf(Leaf leaf)
     {
         leafs.add(leaf);
+        return this;
     }
 
     public ArrayList<Branch> getBranches()
@@ -136,5 +142,27 @@ public class Branch
     public String toString()
     {
         return getNamespace() + ":" + getName();
+    }
+
+    public Branch getBranch(String namespace, String name)
+    {
+        for (Branch branch : branches)
+        {
+            if (namespace == null)
+            {
+                if (branch.getNamespace() == null && branch.getName().equals(name))
+                    return branch;
+            }
+            else
+            {
+                if (branch.getNamespace() != null && branch.getNamespace().equals(namespace)
+                        && branch.getName().equals(name))
+                {
+                    return branch;
+                }
+            }
+        }
+
+        return null;
     }
 }

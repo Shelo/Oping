@@ -7,6 +7,13 @@ public class Leaf
     private ArrayList<String> values;
     private String name;
 
+    public Leaf(String name, String... values)
+    {
+        this(name);
+
+        addValues(values);
+    }
+
     public Leaf(String name)
     {
         this.name = name;
@@ -16,6 +23,12 @@ public class Leaf
     public Leaf()
     {
         this(null);
+    }
+
+    public void addValues(String... values)
+    {
+        for (String value : values)
+            addValue(value);
     }
 
     public void addValue(String value)

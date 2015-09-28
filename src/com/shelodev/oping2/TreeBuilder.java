@@ -13,9 +13,8 @@ public class TreeBuilder
     private static char[] data;
 
     private static int index;
-    private static int indentationLevel;
 
-    public static ArrayList<Branch> build(IndexBuffer elements, char[] data)
+    public static Branch build(IndexBuffer elements, char[] data)
     {
         TreeBuilder.root = new Branch();
         TreeBuilder.elements = elements;
@@ -25,16 +24,17 @@ public class TreeBuilder
 
         process();
 
-        return root.getBranches();
+        // TODO: adjust everything to return just one branch.
+        if (root.getBranches().size() == 1)
+            return root.getBranches().get(0);
+
+        return null;
     }
 
     private static void process()
     {
         while (index < elements.getSize())
-        {
-            indentationLevel = 0;
             buildBranch(root);
-        }
     }
 
     private static void buildBranch(Branch parent)
@@ -58,7 +58,7 @@ public class TreeBuilder
         if (elements.getType(index) == Types.ELEMENT_BRANCH_NAMESPACE)
         {
             String namespace = getDataSubString(index);
-            String name = getDataSubString(index);
+            String name = getDataSubString(index + 1);
             branch.setData(namespace, name);
 
             index += 2;

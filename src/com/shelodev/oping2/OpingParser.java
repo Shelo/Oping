@@ -2,6 +2,9 @@ package com.shelodev.oping2;
 
 import com.shelodev.oping2.structure.Branch;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class OpingParser
@@ -20,7 +23,7 @@ public class OpingParser
         tokenizer = new OpingTokenizer();
     }
 
-    public ArrayList<Branch> parse(char[] data)
+    public Branch parse(char[] data)
     {
         this.tokenIndex = 0;
         this.elementIndex = 0;
@@ -32,7 +35,8 @@ public class OpingParser
 
         process();
 
-        elements.debug(data);
+        // debug data.
+        // elements.debug(data);
 
         return TreeBuilder.build(elements, data);
     }
@@ -233,5 +237,29 @@ public class OpingParser
     public IndexBuffer getElements()
     {
         return elements;
+    }
+
+    public void render(Branch root, File file)
+    {
+        try
+        {
+            if (!file.exists())
+                file.createNewFile();
+        }
+        catch (IOException e)
+        {
+            throw new OpingParserException(e.getMessage());
+        }
+
+        try
+        {
+            FileWriter writer = new FileWriter(file);
+            writer.write(root.toString(0));
+            writer.close();
+        }
+        catch (IOException e)
+        {
+            throw new OpingParserException(e.getMessage());
+        }
     }
 }

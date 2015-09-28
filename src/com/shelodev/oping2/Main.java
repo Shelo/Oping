@@ -39,11 +39,7 @@ public class Main
         */
 
         OpingParser parser = new OpingParser();
-        ArrayList<Branch> branches = parser.parse(data);
-
-        for (Branch branch : branches)
-        {
-            System.out.println(branch.toString(0));
-        }
+        Branch root = parser.parse(data);
+        System.out.println(root.toString(0));
     }
 }
