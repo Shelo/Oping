@@ -109,11 +109,13 @@ public class Branch
     public String toString(int level)
     {
         StringBuilder result = new StringBuilder();
-        result.append("\n");
+
+        if (level != 0)
+            result.append("\n");
 
         for (int i = 0; i < level; i++)
         {
-            result.append("   ");
+            result.append("    ");
         }
 
         if (data.length == 1)
@@ -144,6 +146,38 @@ public class Branch
         return getNamespace() + ":" + getName();
     }
 
+    /**
+     * Gets the first value of the given leaf name and parses it to int.
+     * @param leafName  the name of the leaf.
+     * @return          the value.
+     */
+    public int getSingleInt(String leafName)
+    {
+        Leaf leaf = getLeaf(leafName);
+        return leaf.getInt(0);
+    }
+
+    /**
+     * Returns the first value of the given leaf name and parses it to int.
+     * @param leafName  the name of the leaf.
+     * @return          the value.
+     */
+    public String getSingleString(String leafName)
+    {
+        Leaf leaf = getLeaf(leafName);
+        return leaf.getString(0);
+    }
+
+    /**
+     * Returns the branch at index i.
+     * @param i     the index.
+     * @return      the branch.
+     */
+    public Branch getBranch(int i)
+    {
+        return branches.get(i);
+    }
+
     public Branch getBranch(String namespace, String name)
     {
         for (Branch branch : branches)
@@ -161,6 +195,22 @@ public class Branch
                     return branch;
                 }
             }
+        }
+
+        return null;
+    }
+
+    /**
+     * Finds the first leaf with the name given.
+     * @param name  name of the leaf.
+     * @return      the leaf if found, else null.
+     */
+    public Leaf getLeaf(String name)
+    {
+        for (Leaf leaf : leafs)
+        {
+            if (leaf.getName() != null && leaf.getName().equals(name))
+                return leaf;
         }
 
         return null;

@@ -36,9 +36,43 @@ public class Leaf
         values.add(value);
     }
 
-    public String getValue(int index)
+    public int getInt(int index)
+    {
+        return Integer.parseInt(values.get(index));
+    }
+
+    public float getFloat(int index)
+    {
+        return Float.parseFloat(values.get(index));
+    }
+
+    public double getDouble(int index)
+    {
+        return Double.parseDouble(values.get(index));
+    }
+
+    public boolean getBoolean(int index)
+    {
+        return Boolean.parseBoolean(values.get(index));
+    }
+
+    public String getString(int index)
     {
         return values.get(index);
+    }
+
+    /**
+     * Sets the value to the given index.
+     *
+     * @param index     index of the value.
+     * @param value     new value.
+     * @return          this leaf for chaining.
+     */
+    public Leaf setValue(int index, String value)
+    {
+        values.set(index, value);
+
+        return this;
     }
 
     public void setName(String name)
@@ -62,7 +96,7 @@ public class Leaf
 
         for (int i = 0; i < level; i++)
         {
-            result.append("   ");
+            result.append("    ");
         }
 
         ArrayList<String> strValues = new ArrayList<>();
