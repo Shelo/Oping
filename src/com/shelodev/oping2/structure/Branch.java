@@ -215,4 +215,13 @@ public class Branch
 
         return null;
     }
+
+    public Leaf takeLeaf(String name)
+    {
+        for (int i = leafs.size() - 1; i >= 0; i--)
+            if (name.equals(leafs.get(i).getName()))
+                return leafs.remove(i);
+
+        return null;
+    }
 }

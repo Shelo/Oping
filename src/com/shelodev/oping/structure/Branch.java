@@ -97,6 +97,11 @@ public class Branch extends Node
         return leafs.get(name);
     }
 
+    public void removeLeaf(String name)
+    {
+        leafs.remove(name);
+    }
+
     public Branch getBranch(int index)
     {
         return branches.get(index);

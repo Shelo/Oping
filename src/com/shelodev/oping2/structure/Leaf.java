@@ -75,6 +75,18 @@ public class Leaf
         return this;
     }
 
+    /**
+     * Sets the value to the given index.
+     *
+     * @param index     index of the value.
+     * @param value     new value.
+     * @return          this leaf for chaining.
+     */
+    public Leaf setValue(int index, int value)
+    {
+        return setValue(index, String.valueOf(value));
+    }
+
     public void setName(String name)
     {
         this.name = name;
@@ -118,5 +130,10 @@ public class Leaf
         result.append("\n");
 
         return result.toString();
+    }
+
+    public int size()
+    {
+        return values.size();
     }
 }

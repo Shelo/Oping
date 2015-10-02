@@ -44,9 +44,7 @@ public class OpingParser
     private void process()
     {
         while (tokenIndex < tokens.getSize())
-        {
             parseElements();
-        }
 
         elements.close();
     }
@@ -84,14 +82,23 @@ public class OpingParser
 
         skipSpacesAndTabs();
 
-        byte colon = tokens.getType(tokenIndex + 1);
-
-        if (colon == Types.TOKEN_COLON)
+        // check if there's a colon in the branch description, but only if there's more
+        // tokens left. If not, assume just one branch name.
+        if (tokenIndex + 1 < tokens.getSize())
         {
-            // push namespace and name.
-            pushElement(Types.ELEMENT_BRANCH_NAMESPACE);
-            tokenIndex++;
-            pushElement(Types.ELEMENT_BRANCH_NAME);
+            byte colon = tokens.getType(tokenIndex + 1);
+
+            if (colon == Types.TOKEN_COLON)
+            {
+                // push namespace and name.
+                pushElement(Types.ELEMENT_BRANCH_NAMESPACE);
+                tokenIndex++;
+                pushElement(Types.ELEMENT_BRANCH_NAME);
+            }
+            else
+            {
+                pushElement(Types.ELEMENT_BRANCH_NAME);
+            }
         }
         else
         {
