@@ -1,5 +1,7 @@
 package com.shelodev.oping2.structure;
 
+import com.shelodev.oping2.OpingParserException;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -114,9 +116,10 @@ public class Branch
             result.append("\n");
 
         for (int i = 0; i < level; i++)
-        {
             result.append("    ");
-        }
+
+        if (data == null)
+            throw new OpingParserException("Cannot render no-named branch.");
 
         if (data.length == 1)
         {

@@ -87,6 +87,18 @@ public class Leaf
         return setValue(index, String.valueOf(value));
     }
 
+    /**
+     * Sets the value to the given index.
+     *
+     * @param index     index of the value.
+     * @param value     new value.
+     * @return          this leaf for chaining.
+     */
+    public Leaf setValue(int index, float value)
+    {
+        return setValue(index, String.valueOf(value));
+    }
+
     public void setName(String name)
     {
         this.name = name;

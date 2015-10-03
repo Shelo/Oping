@@ -44,9 +44,7 @@ public class TreeBuilder
         byte type = elements.getType(index);
 
         if (type != Types.ELEMENT_BRANCH_START)
-        {
             throw new OpingParserException("Expected branch.");
-        }
 
         // skip branch start.
         index++;
